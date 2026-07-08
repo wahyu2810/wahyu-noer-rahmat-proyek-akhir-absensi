@@ -27,6 +27,15 @@ SYN_NUMBER = "#79c0ff"      # biru - angka
 
 MONO = "Consolas"
 
+# Warna teks per status kehadiran (dipakai di tabel absensi).
+STATUS_COLORS = {
+    "Hadir": "#3fb950",       # hijau
+    "Izin": "#58a6ff",        # biru
+    "Alfa": "#f85149",        # merah
+    "Terlambat": "#ffbd2e",   # kuning
+    "Belum Absen": "#8b949e", # abu-abu
+}
+
 
 def center_window(window, width, height):
     """Posisikan window di tengah layar (sedikit ke atas)."""
@@ -64,13 +73,63 @@ def make_button(parent, text, command, primary=True):
         parent, text=text, command=command,
         font=(MONO, 10, "bold"), fg=fg, bg=bg,
         activeforeground=fg, activebackground=bg_hover,
+        disabledforeground=COLOR_MUTED,
         relief="flat", cursor="hand2", bd=0, padx=14, pady=8,
     )
     if not primary:
         btn.config(highlightthickness=1, highlightbackground=COLOR_BORDER)
-    btn.bind("<Enter>", lambda e: btn.config(bg=bg_hover))
-    btn.bind("<Leave>", lambda e: btn.config(bg=bg))
+
+    def on_enter(_):
+        if str(btn["state"]) != "disabled":
+            btn.config(bg=bg_hover)
+
+    def on_leave(_):
+        if str(btn["state"]) != "disabled":
+            btn.config(bg=bg)
+
+    btn.bind("<Enter>", on_enter)
+    btn.bind("<Leave>", on_leave)
     return btn
+
+
+def style_combobox(root, style_name="Coding.TCombobox"):
+    """Konfigurasi ttk.Combobox + popdown agar cocok dengan tema gelap."""
+    style = ttk.Style()
+    try:
+        style.theme_use("clam")
+    except tk.TclError:
+        pass
+
+    style.configure(
+        style_name,
+        fieldbackground=COLOR_FIELD,
+        background=COLOR_FIELD,
+        foreground=COLOR_TEXT,
+        arrowcolor=COLOR_ACCENT,
+        bordercolor=COLOR_BORDER,
+        lightcolor=COLOR_BORDER,
+        darkcolor=COLOR_BORDER,
+        relief="flat",
+        padding=5,
+    )
+    style.map(
+        style_name,
+        fieldbackground=[("readonly", COLOR_FIELD), ("focus", COLOR_FIELD)],
+        background=[("readonly", COLOR_FIELD), ("active", COLOR_FIELD)],
+        foreground=[("readonly", COLOR_TEXT)],
+        selectbackground=[("readonly", COLOR_FIELD)],
+        selectforeground=[("readonly", COLOR_TEXT)],
+        arrowcolor=[("readonly", COLOR_ACCENT)],
+        bordercolor=[("focus", COLOR_ACCENT)],
+    )
+
+    # Daftar dropdown (popdown) memakai Listbox Tk klasik -> diatur via option db.
+    root.option_add("*TCombobox*Listbox.background", COLOR_PANEL)
+    root.option_add("*TCombobox*Listbox.foreground", COLOR_TEXT)
+    root.option_add("*TCombobox*Listbox.selectBackground", COLOR_ACCENT_DARK)
+    root.option_add("*TCombobox*Listbox.selectForeground", COLOR_BG)
+    root.option_add("*TCombobox*Listbox.font", (MONO, 10))
+    return style_name
 
 
 def style_treeview(style_name="Coding.Treeview"):

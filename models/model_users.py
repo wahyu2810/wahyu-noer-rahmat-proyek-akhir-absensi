@@ -1,4 +1,3 @@
-import sqlite3
 from database import get_connection
 
 class User:
@@ -11,7 +10,7 @@ class User:
         cursor = conn.cursor()
         cursor.execute('''
             SELECT * FROM users 
-            WHERE username = ? AND password = ?
+            WHERE username = %s AND password = %s
         ''', (username, password))
         user = cursor.fetchone()
         conn.close()
@@ -22,7 +21,7 @@ class User:
         """Get user by ID"""
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
+        cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))
         user = cursor.fetchone()
         conn.close()
         return dict(user) if user else None
@@ -32,7 +31,8 @@ class User:
         """Get all mahasiswa"""
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE role = "mahasiswa" ORDER BY nama')
+        # Single quotes for string literal "mahasiswa"
+        cursor.execute("SELECT * FROM users WHERE role = 'mahasiswa' ORDER BY nama")
         users = cursor.fetchall()
         conn.close()
         return [dict(user) for user in users]

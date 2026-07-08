@@ -1,29 +1,35 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import messagebox
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 from models.model_users import User
+from views import theme as T
 
-
-# ---- Palet warna tema "Coding / Teknik Informatika" ----
-COLOR_BG = "#0d1117"        # GitHub dark
-COLOR_PANEL = "#161b22"     # panel editor
-COLOR_ACCENT = "#2dd4bf"    # teal/cyan terminal
-COLOR_ACCENT_DARK = "#14b8a6"
-COLOR_CARD = "#0d1117"
-COLOR_TEXT = "#e6edf3"
-COLOR_MUTED = "#7d8590"
-COLOR_FIELD = "#161b22"
-COLOR_FIELD_FOCUS = "#1f2937"
-COLOR_BORDER = "#30363d"
+# ---- Palet warna diambil dari tema bersama (views/theme.py) ----
+COLOR_BG = T.COLOR_BG
+COLOR_PANEL = T.COLOR_PANEL
+COLOR_ACCENT = T.COLOR_ACCENT
+COLOR_ACCENT_DARK = T.COLOR_ACCENT_DARK
+COLOR_CARD = T.COLOR_CARD
+COLOR_TEXT = T.COLOR_TEXT
+COLOR_MUTED = T.COLOR_MUTED
+COLOR_FIELD = T.COLOR_FIELD
+COLOR_FIELD_FOCUS = T.COLOR_FIELD_FOCUS
+COLOR_BORDER = T.COLOR_BORDER
 
 # Warna ala syntax highlighting
-SYN_KEYWORD = "#ff7b72"     # merah - keyword
-SYN_FUNC = "#d2a8ff"        # ungu - fungsi
-SYN_STRING = "#a5d6ff"      # biru muda - string
-SYN_COMMENT = "#8b949e"     # abu - komentar
-SYN_NUMBER = "#79c0ff"      # biru - angka
+SYN_KEYWORD = T.SYN_KEYWORD
+SYN_FUNC = T.SYN_FUNC
+SYN_STRING = T.SYN_STRING
+SYN_COMMENT = T.SYN_COMMENT
+SYN_NUMBER = T.SYN_NUMBER
 
-MONO = "Consolas"
+MONO = T.MONO
 
 
 class LoginView:
@@ -44,12 +50,7 @@ class LoginView:
 
     # ------------------------------------------------------------------ utils
     def _center_window(self, width, height):
-        self.master.update_idletasks()
-        screen_w = self.master.winfo_screenwidth()
-        screen_h = self.master.winfo_screenheight()
-        x = (screen_w - width) // 2
-        y = (screen_h - height) // 3
-        self.master.geometry(f"{width}x{height}+{x}+{y}")
+        T.center_window(self.master, width, height)
 
     # ------------------------------------------------------------------- build
     def _build_ui(self):
@@ -160,9 +161,13 @@ class LoginView:
         self.login_btn.bind("<Leave>", lambda e: self.login_btn.config(bg=COLOR_ACCENT))
 
         tk.Label(
+            form, text="# demo · mahasiswa1 / dosen1  —  pass: 123456",
+            font=(MONO, 9), fg=COLOR_MUTED, bg=COLOR_CARD,
+        ).pack(pady=(18, 2))
+        tk.Label(
             form, text="</>  Teknik Informatika  •  Code & Coffee",
             font=(MONO, 9), fg=COLOR_MUTED, bg=COLOR_CARD,
-        ).pack(pady=(18, 0))
+        ).pack(pady=(0, 0))
 
         # Enter untuk login
         self.master.bind("<Return>", lambda e: self.login())
